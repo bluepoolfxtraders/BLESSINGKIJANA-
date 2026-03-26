@@ -3,215 +3,388 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Pool FX | Sovereign Command Center</title>
+    <title>Blue Pool Forex Traders | Institutional Grade Analysis</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
         :root {
-            --primary: #00d4ff; --bg: #010409; --card: rgba(13, 17, 23, 0.98);
-            --border: #30363d; --text: #f0f6fc; --accent: #1f6feb;
-            --whatsapp: #23d366; --danger: #f85149; --gold: #ffd700;
+            --primary: #00d4ff;
+            --secondary: #0051ff;
+            --bg-dark: #050a10;
+            --bg-card: #0d1520;
+            --text-main: #e0e6ed;
+            --text-dim: #94a3b8;
+            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #0051ff 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background: var(--bg); color: var(--text);
-            font-family: 'Inter', -apple-system, sans-serif;
-            margin: 0; overflow-x: hidden; line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .grid-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(var(--border) 1px, transparent 1px), 
-                              linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 40px 40px; z-index: -1; opacity: 0.1;
+        h1, h2, h3 {
+            font-family: 'Space+Grotesk', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        /* LIVE TICKER */
-        .ticker-wrap {
-            width: 100%; overflow: hidden; background: #0d1117;
-            border-bottom: 1px solid var(--border); padding: 5px 0;
-            white-space: nowrap; font-size: 0.75rem; color: var(--primary);
-        }
-        .ticker { display: inline-block; animation: ticker 30s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
 
+        /* --- Navigation --- */
         nav {
-            background: var(--card); border-bottom: 2px solid var(--primary);
-            padding: 1rem 5%; display: flex; justify-content: space-between;
-            align-items: center; position: sticky; top: 0; z-index: 1000;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 25px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(5, 10, 16, 0.8);
             backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .logo { font-size: 1.5rem; font-weight: 900; color: var(--primary); letter-spacing: 2px; }
-        .nav-links button {
-            background: transparent; border: 1px solid var(--primary);
-            color: var(--primary); padding: 8px 12px; border-radius: 6px;
-            cursor: pointer; font-size: 0.8rem; margin-left: 5px; font-weight: bold;
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .page { display: none; padding: 20px 5%; max-width: 1200px; margin: auto; animation: fadeIn 0.4s ease; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
-
-        .glass-card {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 20px; margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .nav-links {
+            display: flex;
+            gap: 30px;
         }
 
-        /* CHART & AI CHAT */
-        .chart-container { width: 100%; height: 450px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 20px; }
-        #ai-chat-window { height: 250px; overflow-y: auto; background: #070a0f; padding: 15px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 15px; font-size: 0.9rem; }
-        .ai-msg { color: var(--primary); margin-bottom: 10px; border-left: 3px solid var(--primary); padding-left: 10px; }
-        .user-msg { color: #8b949e; text-align: right; margin-bottom: 10px; }
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
 
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; background: #0d1117; border: 1px solid var(--border); color: white; border-radius: 6px; box-sizing: border-box; }
-        .btn-action { width: 100%; padding: 14px; background: var(--primary); color: #010409; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        .nav-links a:hover { color: var(--primary); }
 
-        .comm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .comm-link { padding: 12px; border-radius: 6px; text-decoration: none; color: white; font-weight: bold; text-align: center; }
+        /* --- Sections General --- */
+        section {
+            padding: 100px 10%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-        .hidden { display: none !important; }
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title span {
+            color: var(--primary);
+        }
+
+        /* --- Hero Section --- */
+        #hero {
+            text-align: center;
+            background: radial-gradient(circle at center, #102030 0%, #050a10 70%);
+        }
+
+        .hero-content h1 {
+            font-size: 5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            opacity: 0;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0;
+        }
+
+        .cta-button {
+            padding: 15px 40px;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            opacity: 0;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* --- Grid/Cards --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: border 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* --- Performance Section --- */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .stat-item h2 {
+            font-size: 4rem;
+            color: var(--primary);
+        }
+
+        /* --- Contact --- */
+        .contact-form {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 10px;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 50px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+        }
     </style>
 </head>
 <body>
 
-    <div class="grid-bg"></div>
-    <div class="ticker-wrap"><div class="ticker">XAUUSD +1.24% • NAS100 +0.85% • US30 -0.12% • EURUSD +0.04% • GBPJPY +0.45% • BLUE POOL AI STATUS: OPTIMIZED</div></div>
-
-    <nav id="navbar" class="hidden">
-        <div class="logo">BLEZO FX</div>
+    <nav id="nav">
+        <div class="logo">BLUE POOL FOREX</div>
         <div class="nav-links">
-            <button onclick="showPage('course-page')">Lessons</button>
-            <button onclick="showPage('ai-page')">AI Brain</button>
-            <button onclick="showPage('terminal-page')">Terminal</button>
-            <button onclick="logout()" style="border-color: var(--danger); color: var(--danger);">Exit</button>
+            <a href="#hero">Home</a>
+            <a href="#about">Philosophy</a>
+            <a href="#services">Services</a>
+            <a href="#performance">Data</a>
+            <a href="#contact">Inquire</a>
         </div>
     </nav>
 
-    <div id="auth-page" class="page active">
-        <div class="glass-card" style="max-width:380px; margin:100px auto; text-align:center;">
-            <h1 style="color:var(--primary);">IDENTITY SECURE</h1>
-            <input type="text" id="ceo-id" placeholder="CEO Identity">
-            <button class="btn-action" onclick="saveSession()">Enter Command Center</button>
+    <section id="hero">
+        <div class="hero-content">
+            <h1>Precision Trading <br><span>Digital Mastery</span></h1>
+            <p>Welcome to Blue Pool Forex Traders. We bridge the gap between algorithmic complexity and market execution, providing institutional-grade insights for the modern era.</p>
+            <button class="cta-button">Explore Strategies</button>
         </div>
-    </div>
+    </section>
 
-    <div id="terminal-page" class="page">
-        <h1>Institutional Terminal</h1>
-        <div class="chart-container">
-            <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_762ae&symbol=FX%3AXAUUSD&interval=15&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=FX%3AXAUUSD" width="100%" height="100%" frameborder="0" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-            <div class="glass-card" style="text-align: center; border-top: 4px solid var(--primary);"><div>Net Profit</div><div style="font-size: 2rem; font-weight: 800;" id="p-val">$0.00</div></div>
-            <div class="glass-card" style="text-align: center; border-top: 4px solid var(--gold);"><div>Win Rate</div><div style="font-size: 2rem; font-weight: 800;" id="w-val">0%</div></div>
-        </div>
-
-        <div class="glass-card">
-            <h3>Log Position</h3>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="t-pair" placeholder="Asset" style="flex:2">
-                <input type="number" id="t-amt" placeholder="P/L" style="flex:1">
-                <button class="btn-action" onclick="logTrade()" style="flex:1">Record</button>
+    <section id="about">
+        <h2 class="section-title">The <span>Core</span> Methodology</h2>
+        <div class="grid-container">
+            <div class="card reveal">
+                <h3>Liquidity Hunting</h3>
+                <p>We analyze "The Pool"—identifying where massive institutional orders are parked to predict high-probability reversals and breakouts.</p>
+            </div>
+            <div class="card reveal">
+                <h3>Risk Architecture</h3>
+                <p>Mathematics over emotion. Our portfolios are protected by dynamic hedging and strict 1:3 minimum risk-to-reward ratios.</p>
+            </div>
+            <div class="card reveal">
+                <h3>Global Macro</h3>
+                <p>Combining technical price action with fundamental shifts in central bank policies across the G10 currencies.</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div id="ai-page" class="page">
-        <h1>Global AI analyst</h1>
-        <div class="glass-card">
-            <h3>Comms Hub</h3>
-            <div class="comm-grid">
-                <a href="https://wa.me/254000000000" class="comm-link" style="background: var(--whatsapp);" target="_blank">WhatsApp</a>
-                <a href="tel:+254000000000" class="comm-link" style="background: var(--primary); color:#000;">Call CEO</a>
+    <section id="services">
+        <h2 class="section-title">Professional <span>Offerings</span></h2>
+        <div class="grid-container">
+            <div class="card reveal">
+                <h3>Signal Intelligence</h3>
+                <p>Real-time execution alerts based on our proprietary Blue Pool Algorithm. Coverage includes Major pairs, XAUUSD, and Indices.</p>
+            </div>
+            <div class="card reveal">
+                <h3>One-on-One Mentorship</h3>
+                <p>Deep dive into market mechanics. Learn to read the tape, manage psychological drawdowns, and build your own trading edge.</p>
+            </div>
+            <div class="card reveal">
+                <h3>Automated Solutions</h3>
+                <p>Custom MT5/PineScript development for traders looking to automate their manual strategies with high-precision code.</p>
+            </div>
+            <div class="card reveal">
+                <h3>Market Reports</h3>
+                <p>Comprehensive weekly breakdowns of COT data, interest rate projections, and institutional positioning sentiment.</p>
             </div>
         </div>
+    </section>
 
-        <div class="glass-card">
-            <h3>Institutional Brain</h3>
-            <div id="ai-chat-window"><div class="ai-msg">Awaiting data logs for SMC analysis...</div></div>
-            <textarea id="ai-input" rows="2" placeholder="Analyze: XAUUSD swept SSL and broke structure..."></textarea>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <input type="number" id="calc-bal" value="1000" placeholder="Balance">
-                <input type="number" id="calc-sl" placeholder="SL Pips">
-                <select id="calc-asset"><option value="10">Forex</option><option value="1">Gold</option><option value="100">Indices</option></select>
-                <button class="btn-action" onclick="runAI()">Analyze</button>
+    <section id="performance">
+        <h2 class="section-title">Validated <span>Results</span></h2>
+        <div class="stats-container">
+            <div class="stat-item reveal">
+                <h2 class="counter" data-target="84">0</h2>
+                <p>Win Rate %</p>
+            </div>
+            <div class="stat-item reveal">
+                <h2 class="counter" data-target="12">0</h2>
+                <p>Avg. Monthly %</p>
+            </div>
+            <div class="stat-item reveal">
+                <h2 class="counter" data-target="500">0</h2>
+                <p>Active Traders</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div id="course-page" class="page">
-        <h1>Edge Floor Curriculum</h1>
-        <div class="glass-card">
-            <h3>Module 1: Liquidity & Sweeps</h3>
-            <p>Institutional moves require fuel. That fuel is retail stop losses. Wait for the sweep before the entry.</p>
-            <h3>Module 2: The Change of Character</h3>
-            <p>CHoCH is our confirmation. It shows the Big Money has successfully flipped the order flow.</p>
+    <section id="contact">
+        <h2 class="section-title">Get In <span>Touch</span></h2>
+        <div class="contact-form reveal">
+            <div class="form-group">
+                <input type="text" placeholder="Full Name">
+            </div>
+            <div class="form-group">
+                <input type="email" placeholder="Email Address">
+            </div>
+            <div class="form-group">
+                <textarea rows="5" placeholder="Your Message / Trading Goals"></textarea>
+            </div>
+            <button class="cta-button">Send Transmission</button>
         </div>
-    </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Blue Pool Forex Traders. All rights reserved. High-risk investment notice: Trading involves significant risk of loss.</p>
+    </footer>
 
     <script>
-        function checkSession() {
-            const user = localStorage.getItem('bp_v4_session');
-            if (user) {
-                document.getElementById('navbar').classList.remove('hidden');
-                showPage('terminal-page');
-                refreshData();
-            }
-        }
+        // Register ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
 
-        function saveSession() {
-            const name = document.getElementById('ceo-id').value;
-            if(!name) return;
-            localStorage.setItem('bp_v4_session', name);
-            location.reload();
-        }
+        // --- Hero Animations ---
+        const tl = gsap.timeline();
 
-        function logout() { localStorage.removeItem('bp_v4_session'); location.reload(); }
+        tl.to(".hero-content h1", {
+            opacity: 1,
+            y: -20,
+            duration: 1,
+            ease: "power4.out",
+            delay: 0.5
+        })
+        .to(".hero-content p", {
+            opacity: 1,
+            y: -20,
+            duration: 1,
+            ease: "power4.out"
+        }, "-=0.6")
+        .to(".cta-button", {
+            opacity: 1,
+            y: -10,
+            duration: 1,
+            ease: "bounce.out"
+        }, "-=0.6");
 
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+        // --- Scroll-Based Reveals ---
+        const reveals = document.querySelectorAll(".reveal");
 
-        function runAI() {
-            const chat = document.getElementById('ai-chat-window');
-            const input = document.getElementById('ai-input');
-            const bal = parseFloat(document.getElementById('calc-bal').value);
-            const sl = parseFloat(document.getElementById('calc-sl').value);
-            const ast = parseFloat(document.getElementById('calc-asset').value);
+        reveals.forEach((el) => {
+            gsap.fromTo(el, 
+                { opacity: 0, y: 50 }, 
+                { 
+                    opacity: 1, 
+                    y: 0, 
+                    duration: 1, 
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: el,
+                        start: "top 85%", 
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        });
 
-            if(input.value) chat.innerHTML += `<div class="user-msg">${input.value}</div>`;
+        // --- Counter Animation for Performance ---
+        const counters = document.querySelectorAll(".counter");
+
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
             
-            setTimeout(() => {
-                let r = "--- REPORT ---\n";
-                if(sl > 0) r += `🛡️ LOT SIZE: Use ${( (bal * 0.01) / (sl * ast) ).toFixed(2)} for 1% risk.\n`;
-                r += "🔍 SMC VERDICT: Context identified. Wait for FVG mitigation.";
-                chat.innerHTML += `<div class="ai-msg">${r}</div>`;
-                chat.scrollTop = chat.scrollHeight;
-                input.value = "";
-            }, 800);
-        }
+            ScrollTrigger.create({
+                trigger: counter,
+                start: "top 90%",
+                onEnter: () => {
+                    gsap.to(counter, {
+                        innerText: target,
+                        duration: 2,
+                        snap: { innerText: 1 },
+                        ease: "power1.inOut"
+                    });
+                }
+            });
+        });
 
-        function logTrade() {
-            const p = document.getElementById('t-pair').value;
-            const a = parseFloat(document.getElementById('t-amt').value);
-            if(!p || isNaN(a)) return;
-            let trades = JSON.parse(localStorage.getItem('bp_v4_trades') || "[]");
-            trades.push({p, a});
-            localStorage.setItem('bp_v4_trades', JSON.stringify(trades));
-            refreshData();
-        }
-
-        function refreshData() {
-            const t = JSON.parse(localStorage.getItem('bp_v4_trades') || "[]");
-            let p = 0, w = 0;
-            t.forEach(i => { p += i.a; if(i.a > 0) w++; });
-            document.getElementById('p-val').innerText = "$" + p.toFixed(2);
-            document.getElementById('w-val').innerText = t.length > 0 ? Math.round((w/t.length)*100) + "%" : "0%";
-        }
-
-        window.onload = checkSession;
+        // --- Nav Hover Effect ---
+        const nav = document.querySelector("#nav");
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 50) {
+                nav.style.padding = "15px 50px";
+                nav.style.background = "rgba(5, 10, 16, 0.95)";
+            } else {
+                nav.style.padding = "25px 50px";
+                nav.style.background = "rgba(5, 10, 16, 0.8)";
+            }
+        });
     </script>
 </body>
 </html>
+
