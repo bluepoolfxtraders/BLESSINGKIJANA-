@@ -3,287 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLEZO FX | Blue Pool Institutional Terminal v69</title>
+    <title>Blue Pool Forex Traders | Institutional Command v2.7</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+
     <style>
-        /* CSS ARCHITECTURE: THE VISUAL ENGINE
-           This section handles the "Spatial UI" and the cinematic overlays.
-        */
         :root {
-            --neon-blue: #00d4ff;
-            --matrix-green: #00ff88;
-            --warning-red: #ff0055;
-            --glass-bg: rgba(0, 15, 30, 0.4);
-            --border-glow: rgba(0, 212, 255, 0.3);
+            --cyan: #00f2ff;
+            --navy: #020617;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(0, 242, 255, 0.15);
+            --error: #ff4d4d;
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #010103;
-            font-family: 'Courier New', Courier, monospace;
-            cursor: crosshair;
-            color: #ffffff;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--navy); color: #f1f5f9; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+
+        /* --- Global WebGL Canvas --- */
+        #webgl-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* --- Phase 1: Auth Gateway --- */
+        #auth-gate {
+            position: fixed; width: 100%; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000; background: radial-gradient(circle, rgba(2,6,23,0.5) 0%, rgba(2,6,23,1) 100%);
+            backdrop-filter: blur(10px);
         }
 
-        /* CRT SCANLINES: Mimics the high-end trading monitors from your video */
-        body::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 100;
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
-            opacity: 0.6;
+        .auth-card {
+            background: var(--glass); border: 1px solid var(--border);
+            padding: 50px; border-radius: 20px; width: 100%; max-width: 450px;
+            text-align: center; box-shadow: 0 0 50px rgba(0, 242, 255, 0.1);
         }
 
-        #webgl-container {
-            position: fixed;
-            top: 0; left: 0;
-            z-index: 1;
-            filter: contrast(1.2) brightness(1.1);
-        }
+        .auth-card h2 { color: var(--cyan); margin-bottom: 10px; font-weight: 700; letter-spacing: 2px; }
+        .auth-card p { font-size: 0.85rem; color: #94a3b8; margin-bottom: 30px; }
 
-        /* SPATIAL UI: THE TRADING TERMINAL INTERFACE */
-        .interface-layer {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-            perspective: 1000px;
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--cyan); margin-bottom: 8px; }
+        input {
+            width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border); border-radius: 8px; color: white;
+            font-family: 'JetBrains Mono'; outline: none; transition: 0.3s;
         }
+        input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
 
-        .main-terminal {
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border-glow);
-            padding: 60px;
-            border-radius: 4px;
-            text-align: center;
-            pointer-events: auto;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 212, 255, 0.05);
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-            max-width: 90%;
+        .auth-btn {
+            width: 100%; padding: 15px; background: var(--cyan); color: var(--navy);
+            border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; margin-top: 10px;
         }
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,242,255,0.4); }
 
-        /* GLITCH ENGINE: THE HIGH-SPEED DATA EFFECT */
-        .glitch-brand {
-            font-size: clamp(2rem, 8vw, 5rem);
-            font-weight: 900;
-            color: white;
-            letter-spacing: 20px;
-            position: relative;
-            text-shadow: 0 0 15px var(--neon-blue);
+        .toggle-auth { margin-top: 20px; font-size: 0.8rem; cursor: pointer; color: #94a3b8; }
+        .toggle-auth span { color: var(--cyan); font-weight: 700; }
+
+        /* --- Phase 2: Main Content --- */
+        #main-content { display: none; opacity: 0; }
+
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 25px 6%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(20px);
+            z-index: 1000; border-bottom: 1px solid var(--border);
         }
+        .brand { font-weight: 700; font-size: 1.3rem; color: var(--cyan); letter-spacing: 2px; }
 
-        .glitch-brand::before, .glitch-brand::after {
-            content: "BLEZO FX";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+        section { padding: 140px 10%; min-height: 100vh; }
+        .tag { font-family: 'JetBrains Mono', monospace; color: var(--cyan); font-size: 0.8rem; margin-bottom: 15px; display: block; }
+        h1, h2 { font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1; margin-bottom: 40px; }
+
+        /* Grid Data Modules */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 50px; }
+        .module { background: var(--glass); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .module h3 { color: var(--cyan); margin-bottom: 20px; }
+
+        /* Terminal Console */
+        .terminal {
+            background: #000; border: 1px solid var(--border);
+            padding: 30px; border-radius: 12px; font-family: 'JetBrains Mono', monospace;
+            margin-top: 50px; font-size: 0.9rem;
         }
+        .term-header { border-bottom: 1px solid #1e293b; padding-bottom: 10px; margin-bottom: 15px; color: #4ade80; }
 
-        .glitch-brand::before {
-            left: 3px;
-            text-shadow: -3px 0 var(--warning-red);
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim 4s infinite linear alternate-reverse;
-        }
+        /* Tables */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+        .data-table th, .data-table td { padding: 20px; text-align: left; border-bottom: 1px solid var(--border); }
+        .data-table th { color: var(--cyan); font-family: 'JetBrains Mono'; font-weight: 400; }
 
-        .glitch-brand::after {
-            left: -3px;
-            text-shadow: -3px 0 var(--neon-blue);
-            clip: rect(10px, 450px, 30px, 0);
-            animation: glitch-anim 2s infinite linear alternate-reverse;
-        }
+        footer { padding: 80px 10%; border-top: 1px solid var(--border); text-align: center; color: #475569; font-size: 0.85rem; }
 
-        @keyframes glitch-anim {
-            0% { clip: rect(15px, 9999px, 80px, 0); transform: skew(0.5deg); }
-            5% { clip: rect(40px, 9999px, 10px, 0); transform: skew(-1deg); }
-            10% { clip: rect(85px, 9999px, 100px, 0); transform: skew(0deg); }
-            15% { clip: rect(0px, 9999px, 0px, 0); } 
-            20% { clip: rect(30px, 9999px, 60px, 0); }
-            100% { clip: rect(10px, 9999px, 90px, 0); }
-        }
-
-        .sub-text {
-            color: var(--neon-blue);
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-top: 10px;
-            opacity: 0.8;
-            font-size: 1rem;
-        }
-
-        /* DATA LOGS: SMART MONEY CONCEPTS FEED */
-        .log-box {
-            margin-top: 40px;
-            font-family: 'Courier New', monospace;
-            color: var(--matrix-green);
-            font-size: 0.85rem;
-            text-align: left;
-            border-top: 1px solid rgba(0, 212, 255, 0.1);
-            padding-top: 20px;
-            min-height: 100px;
-        }
-
-        .cursor-line { animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        .trade-btn {
-            margin-top: 30px;
-            padding: 15px 40px;
-            background: transparent;
-            color: var(--neon-blue);
-            border: 1px solid var(--neon-blue);
-            font-family: inherit;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        .trade-btn:hover {
-            background: var(--neon-blue);
-            color: black;
-            box-shadow: 0 0 30px var(--neon-blue);
-        }
+        @media (max-width: 900px) { section { padding: 100px 5%; } }
     </style>
 </head>
 <body>
 
-    <canvas id="webgl-container"></canvas>
+    <canvas id="webgl-canvas"></canvas>
 
-    <div class="interface-layer">
-        <div class="main-terminal" id="tilt-card">
-            <div class="glitch-brand">BLEZO FX</div>
-            <div class="sub-text">Blue Pool Institutional Trading Logic</div>
-            
-            <div class="log-box">
-                <div>[SYSTEM]: BLUE POOL BOT V69 INITIALIZED...</div>
-                <div>[DATA]: SCANNING SMC ORDER BLOCKS...</div>
-                <div id="dynamic-log">> WAITING FOR LIQUIDITY SIGNAL...</div>
-                <div>[STATUS]: ONLINE <span class="cursor-line">_</span></div>
+    <div id="auth-gate">
+        <div class="auth-card" id="login-form">
+            <h2>AUTHORIZATION</h2>
+            <p>Access the Blue Pool Institutional Terminal</p>
+            <div class="form-group">
+                <label>OPERATOR_ID</label>
+                <input type="text" placeholder="Enter Username">
             </div>
+            <div class="form-group">
+                <label>ENCRYPTION_KEY</label>
+                <input type="password" placeholder="••••••••">
+            </div>
+            <button class="auth-btn" onclick="authenticate()">INITIALIZE UPLINK</button>
+            <p class="toggle-auth">No access? <span onclick="toggleAuth()">Register New Account</span></p>
+        </div>
 
-            <button class="trade-btn" onclick="triggerExplosion()">Execute Trade</button>
+        <div class="auth-card" id="register-form" style="display:none;">
+            <h2>NEW ACCOUNT</h2>
+            <p>Establish a connection to the Sovereign Liquidity Hub</p>
+            <div class="form-group">
+                <label>FULL_NAME</label>
+                <input type="text" placeholder="Identity Verification">
+            </div>
+            <div class="form-group">
+                <label>DESIRED_USERNAME</label>
+                <input type="text" placeholder="Operator Name">
+            </div>
+            <div class="form-group">
+                <label>PASSWORD</label>
+                <input type="password" placeholder="••••••••">
+            </div>
+            <button class="auth-btn" onclick="authenticate()">CREATE CREDENTIALS</button>
+            <p class="toggle-auth">Already registered? <span onclick="toggleAuth()">Back to Login</span></p>
         </div>
     </div>
 
-    <script type="importmap">
-        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
-    </script>
+    <div id="main-content">
+        <nav>
+            <div class="brand">BLUE POOL / SOVEREIGN</div>
+            <div id="live-clock" style="font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 0.8rem;">00:00:00 UTC</div>
+        </nav>
 
-    <script type="module">
-        import * as THREE from 'three';
+        <section id="dashboard">
+            <span class="tag">/ / SESSION_ESTABLISHED</span>
+            <h1 id="hero-text">SOVEREIGN <br><span style="color:var(--cyan)">QUANTITATIVE CONTROL.</span></h1>
+            <p>Accessing live liquidity metrics across the London and New York exchanges. Blue Pool utilizes high-frequency Smart Money Concepts to identify institutional footprints.</p>
+            
+            <div class="terminal">
+                <div class="term-header">SYSTEM_UPLINK_LOG_V2.71</div>
+                <div id="log-output"></div>
+            </div>
+        </section>
 
-        // 1. SCENE SETUP
+        <section id="software">
+            <span class="tag">/ / MANDATORY_SOFTWARE_STACK</span>
+            <h2>THE TECHNICAL FRAMEWORK</h2>
+            <div class="grid">
+                <div class="module reveal">
+                    <h3>MetaTrader 5 (64-Bit)</h3>
+                    <p>The primary execution engine. Configured for low-latency liquidity access and advanced order flow analysis via MQL5.</p>
+                </div>
+                <div class="module reveal">
+                    <h3>Termux / Linux Environment</h3>
+                    <p>Mobile command center for executing Python bots, managing SSH tunnels to London VPS, and tracking real-time server health.</p>
+                </div>
+                <div class="module reveal">
+                    <h3>Python MT5 API</h3>
+                    <p>The algorithmic bridge. Handles data extraction, Fair Value Gap detection, and automated position management without human error.</p>
+                </div>
+                <div class="module reveal">
+                    <h3>LD4 Institutional VPS</h3>
+                    <p>High-performance hosting located in the Equinix London data center, ensuring slippage-free execution and 100% uptime.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="data">
+            <span class="tag">/ / QUANT_BACKTEST_DATA</span>
+            <h2>VALIDATED STRATEGY METRICS</h2>
+            <div class="table-wrap reveal">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>STRATEGY MODEL</th>
+                            <th>WIN RATE (%)</th>
+                            <th>PROFIT FACTOR</th>
+                            <th>AVG. MONTHLY (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SMC Liquidity Sweep (XAUUSD)</td>
+                            <td>82.4%</td>
+                            <td>3.82</td>
+                            <td>+14.2%</td>
+                        </tr>
+                        <tr>
+                            <td>Fair Value Gap Reversal (EURUSD)</td>
+                            <td>76.1%</td>
+                            <td>2.95</td>
+                            <td>+9.8%</td>
+                        </tr>
+                        <tr>
+                            <td>Institutional Order Flow (NAS100)</td>
+                            <td>68.5%</td>
+                            <td>4.10</td>
+                            <td>+22.4%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="glossary">
+            <span class="tag">/ / INSTITUTIONAL_TERMINOLOGY</span>
+            <h2>TERMINAL GLOSSARY</h2>
+            <div class="grid">
+                <div class="module reveal">
+                    <h3>Order Block (OB)</h3>
+                    <p>Specific price candle where banks and large funds have injected massive liquidity prior to a structural break.</p>
+                </div>
+                <div class="module reveal">
+                    <h3>Market Structure Shift (MSS)</h3>
+                    <p>The precise moment where price breaches a previous swing high/low, signaling a change in institutional trend direction.</p>
+                </div>
+                <div class="module reveal">
+                    <h3>Displacement</h3>
+                    <p>A forceful move in price that creates an imbalance, leaving behind Fair Value Gaps that institutions eventually re-fill.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>BLUE POOL FOREX TRADERS &copy; 2026. THE SOVEREIGN TRADING STANDARD.</p>
+            <p style="margin-top: 15px; opacity: 0.3;">DISCLAIMER: Trading Forex involves high risk. Algorithmic results are based on historical performance data.</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- 1. WEBGL PARTICLE SYSTEM ---
+        const canvas = document.querySelector('#webgl-canvas');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ 
-            canvas: document.querySelector('#webgl-container'), 
-            antialias: true,
-            alpha: true 
-        });
-        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        camera.position.z = 60;
 
-        // 2. LIQUIDITY PARTICLE SYSTEM (15,000 Nodes)
-        const particleCount = 15000;
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
+        const particlesGeom = new THREE.BufferGeometry();
+        const count = 4000;
+        const posArr = new Float32Array(count * 3);
 
-        for(let i = 0; i < particleCount * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 250;
+        for(let i = 0; i < count * 3; i++) {
+            posArr[i] = (Math.random() - 0.5) * 10;
         }
+        particlesGeom.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
+        const material = new THREE.PointsMaterial({ size: 0.005, color: 0x00f2ff, transparent: true, opacity: 0.6 });
+        const mesh = new THREE.Points(particlesGeom, material);
+        scene.add(mesh);
+        camera.position.z = 4;
 
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const material = new THREE.PointsMaterial({
-            size: 0.15,
-            color: 0x00d4ff,
-            transparent: true,
-            opacity: 0.5,
-            blending: THREE.AdditiveBlending
-        });
-
-        const starField = new THREE.Points(geometry, material);
-        scene.add(starField);
-
-        // 3. MOUSE TRACKING & INTERACTIVE TILT
-        let mouseX = 0, mouseY = 0;
-        const card = document.getElementById('tilt-card');
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - window.innerWidth / 2);
-            mouseY = (e.clientY - window.innerHeight / 2);
-
-            // Calculate tilt degrees for the glass card
-            const xRotation = (window.innerHeight / 2 - e.clientY) / 15;
-            const yRotation = (e.clientX - window.innerWidth / 2) / 15;
-            card.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
-        });
-
-        // 4. ANIMATION PIPELINE
         function animate() {
             requestAnimationFrame(animate);
-
-            // Subtle matrix rotation
-            starField.rotation.y += 0.0006;
-            starField.rotation.x += 0.0002;
-
-            // Smooth camera follow (LERP)
-            camera.position.x += (mouseX * 0.06 - camera.position.x) * 0.03;
-            camera.position.y += (-mouseY * 0.06 - camera.position.y) * 0.03;
-            camera.lookAt(scene.position);
-
+            mesh.rotation.y += 0.0005;
+            mesh.rotation.x += 0.0002;
             renderer.render(scene, camera);
         }
+        animate();
 
-        // 5. SMC TRADING LOGS
-        const tradeLogs = [
-            "> [ANALYSIS]: FAIR VALUE GAP DETECTED AT 1.0942",
-            "> [LIQUIDITY]: SELL-SIDE LIQUIDITY CLEARED",
-            "> [INSTITUTIONAL]: HEAVY ACCUMULATION DETECTED",
-            "> [ORDER BLOCK]: MITIGATION IN PROGRESS...",
-            "> [DATA]: REFRESHING BLUE POOL TRADING NODES"
-        ];
-        let logIndex = 0;
+        // --- 2. AUTHENTICATION LOGIC ---
+        function toggleAuth() {
+            const login = document.getElementById('login-form');
+            const register = document.getElementById('register-form');
+            if (login.style.display === "none") {
+                login.style.display = "block";
+                register.style.display = "none";
+            } else {
+                login.style.display = "none";
+                register.style.display = "block";
+            }
+        }
+
+        function authenticate() {
+            // GSAP Transition
+            const tl = gsap.timeline();
+            tl.to("#auth-gate", { opacity: 0, duration: 1, ease: "power4.out" })
+              .set("#auth-gate", { display: "none" })
+              .set("#main-content", { display: "block" })
+              .to("#main-content", { opacity: 1, duration: 1 })
+              .call(() => {
+                  initMainAnimations();
+                  startLogs();
+              });
+        }
+
+        // --- 3. MAIN TERMINAL LOGIC ---
+        gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
+        function initMainAnimations() {
+            gsap.from("#hero-text", { y: 100, opacity: 0, duration: 1.5, ease: "power4.out" });
+            
+            document.querySelectorAll('.reveal').forEach(el => {
+                gsap.from(el, {
+                    scrollTrigger: { trigger: el, start: "top 90%", toggleActions: "play none none reverse" },
+                    y: 50, opacity: 0, duration: 1
+                });
+            });
+        }
+
+        function startLogs() {
+            const logs = [
+                "> CONNECTION ESTABLISHED: London LD4",
+                "> INITIALIZING BLUE_POOL_CORE v2.71",
+                "> SYNCING MT5 ALGORITHMIC HUB...",
+                "> SCANNING LIQUIDITY ARRAYS: XAUUSD",
+                "> FAIR VALUE GAP DETECTED AT 2145.20",
+                "> STATUS: STANDBY - AWAITING NEW YORK OPEN",
+                "> SYSTEM_READY: Institutional Authority Verified."
+            ];
+            const output = document.getElementById('log-output');
+            let i = 0;
+            function addLog() {
+                if(i < logs.length) {
+                    const p = document.createElement('p');
+                    p.style.marginBottom = "8px";
+                    p.innerHTML = `<span style="color:var(--cyan)">[BP_ADMIN@root]~#</span> ${logs[i]}`;
+                    output.appendChild(p);
+                    gsap.from(p, { opacity: 0, x: -20, duration: 0.4 });
+                    i++;
+                    setTimeout(addLog, 1000);
+                }
+            }
+            addLog();
+        }
+
         setInterval(() => {
-            document.getElementById('dynamic-log').innerText = tradeLogs[logIndex];
-            logIndex = (logIndex + 1) % tradeLogs.length;
-        }, 3000);
+            document.getElementById('live-clock').innerText = new Date().toUTCString().split(' ')[4] + " UTC";
+        }, 1000);
 
-        // 6. WINDOW RESIZING
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        animate();
-
-        // 7. INTERACTIVE PARTICLE BURST
-        window.triggerExplosion = function() {
-            starField.material.color.setHex(0x00ff88); // Turn green on success
-            starField.scale.set(1.5, 1.5, 1.5);
-            setTimeout(() => {
-                starField.material.color.setHex(0x00d4ff);
-                starField.scale.set(1, 1, 1);
-            }, 500);
-        };
     </script>
 </body>
 </html>
+
