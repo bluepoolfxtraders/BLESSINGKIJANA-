@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLUE POOL FX | SOVEREIGN COMMAND</title>
+    <title>BLEZO FX | SOVEREIGN COMMAND</title>
 
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -13,323 +13,263 @@
     <style>
         :root {
             --cyan: #00f2ff;
-            --bg: #020617;
-            --border: rgba(0, 242, 255, 0.12);
+            --navy: #020617;
+            --border: rgba(0, 242, 255, 0.1);
+            --glass: rgba(2, 6, 23, 0.8);
             --green: #10b981;
-            --red: #ef4444;
-            --gold: #fcd34d;
-            --glass: rgba(2, 6, 23, 0.85);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background: var(--bg); color: #fff; font-family: 'Space Grotesk', sans-serif; 
+            background: var(--navy); color: #fff; 
+            font-family: 'Space Grotesk', sans-serif; 
             overflow-x: hidden; scroll-behavior: smooth;
         }
 
-        /* ===== 1000 LINE SIDEBAR ===== */
+        /* ===== 1. THE 1000-LINE SIDEBAR ===== */
         #line-gutter {
-            position: fixed; left: 0; top: 0; width: 60px; height: 100%;
-            background: #000; border-right: 1px solid var(--border);
-            font-family: 'JetBrains Mono'; font-size: 10px; color: #1e293b;
-            padding-top: 100px; text-align: center; overflow: hidden; z-index: 999;
+            position: fixed; left: 0; top: 0; width: 55px; height: 100%;
+            background: rgba(0,0,0,0.8); border-right: 1px solid var(--border);
+            font-family: 'JetBrains Mono'; font-size: 9px; color: #334155;
+            padding-top: 100px; text-align: center; overflow: hidden; z-index: 1001;
             pointer-events: none;
         }
 
-        /* ===== WEBGL VORTEX ===== */
-        #webgl-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        /* ===== 2. WEBGL BACKGROUND ===== */
+        #webgl-vortex { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
 
-        /* ===== HUD HEADER ===== */
+        /* ===== 3. HUD HEADER ===== */
         header {
-            position: fixed; width: 100%; padding: 20px;
+            position: fixed; top: 0; left: 55px; right: 0; height: 80px;
             display: flex; justify-content: space-between; align-items: center;
-            background: var(--glass); backdrop-filter: blur(20px);
-            padding-left: 80px; border-bottom: 1px solid var(--border);
-            z-index: 1000;
+            padding: 0 40px; background: var(--glass); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); z-index: 1000;
         }
-        .brand-label { font-weight: 700; letter-spacing: 4px; color: var(--cyan); font-size: 1rem; }
-        #clock-precision { font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 12px; font-weight: 700; }
+        .logo { font-weight: 700; letter-spacing: 5px; color: var(--cyan); }
+        #precision-clock { font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 13px; font-weight: 700; }
 
-        /* ===== HERO: ANIME STYLE BOXES ===== */
+        /* ===== 4. HERO SECTION ===== */
         .hero {
-            height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            padding-left: 60px; text-align: center; position: relative;
+            height: 100vh; margin-left: 55px; position: relative;
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 0 8%; overflow: hidden;
         }
-        .hero h1 { font-size: clamp(3.5rem, 12vw, 8rem); font-weight: 700; line-height: 0.85; margin-bottom: 20px; }
-        .hero p { color: var(--cyan); letter-spacing: 12px; font-family: 'JetBrains Mono'; font-size: 0.7rem; opacity: 0.6; }
+        .hero-title { font-size: clamp(4rem, 15vw, 12rem); font-weight: 700; line-height: 0.8; letter-spacing: -5px; }
+        .hero-sub { font-family: 'JetBrains Mono'; color: var(--cyan); letter-spacing: 15px; font-size: 0.8rem; margin-top: 20px; text-transform: uppercase; }
+        
+        /* Floating Anime Style Cards */
+        .f-card {
+            position: absolute; width: 280px; padding: 25px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);
+            border-radius: 16px; backdrop-filter: blur(15px); z-index: 10;
+        }
+        .f-card h4 { font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px; }
+        .f-card p { font-size: 0.85rem; color: #94a3b8; line-height: 1.5; }
 
-        .f-box {
-            position: absolute; width: 300px; padding: 25px;
+        /* ===== 5. CONTENT SECTIONS ===== */
+        section {
+            min-height: 100vh; margin-left: 55px; padding: 120px 8%;
+            border-top: 1px solid var(--border); background: rgba(2, 6, 23, 0.4);
+            position: relative; z-index: 5;
+        }
+        .section-tag { font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 11px; letter-spacing: 5px; margin-bottom: 20px; display: block; }
+        h2 { font-size: 4rem; font-weight: 700; margin-bottom: 60px; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .module {
             background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border);
-            border-radius: 16px; backdrop-filter: blur(12px); z-index: 50;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            padding: 40px; border-radius: 24px; transition: 0.4s;
         }
-        .f-box h4 { font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 0.7rem; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        .f-box p { font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
+        .module:hover { border-color: var(--cyan); background: rgba(0, 242, 255, 0.05); transform: translateY(-10px); }
 
-        /* ===== DATA SECTIONS ===== */
-        section { padding: 120px 60px 120px 100px; border-top: 1px solid var(--border); position: relative; }
-        .tag { font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 0.65rem; letter-spacing: 3px; display: block; margin-bottom: 15px; }
-        h2 { font-size: 2.5rem; margin-bottom: 40px; font-weight: 700; }
-
-        .grid-master { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
-        .module-card { 
-            background: rgba(255,255,255,0.01); border: 1px solid var(--border); 
-            padding: 40px; border-radius: 24px; position: relative; overflow: hidden;
-            transition: 0.4s ease;
-        }
-        .module-card:hover { border-color: var(--cyan); background: rgba(0, 242, 255, 0.04); transform: translateY(-5px); }
-
-        .btn-action {
-            display: inline-block; padding: 14px 30px; border: 1px solid var(--cyan);
+        .btn {
+            display: inline-block; padding: 15px 35px; border: 1px solid var(--cyan);
             color: var(--cyan); text-decoration: none; font-family: 'JetBrains Mono';
-            font-size: 0.75rem; font-weight: 700; border-radius: 4px; transition: 0.3s;
-            margin-top: 20px; text-transform: uppercase;
+            font-size: 12px; border-radius: 4px; transition: 0.3s; margin-top: 30px;
         }
-        .btn-action:hover { background: var(--cyan); color: #000; box-shadow: 0 0 25px var(--cyan); }
+        .btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 30px var(--cyan); }
 
-        /* ===== PORTFOLIO SECTION ===== */
-        .portfolio-item { display: flex; gap: 20px; align-items: center; margin-bottom: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid var(--border); }
-        .portfolio-icon { width: 50px; height: 50px; background: var(--cyan); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 700; }
-
-        /* ===== TICKER ===== */
-        .ticker-wrap { position: fixed; bottom: 0; width: 100%; background: #000; padding: 8px 0; border-top: 1px solid var(--border); z-index: 1001; }
-        .ticker-track { display: flex; animation: scrollTicker 35s linear infinite; font-family: 'JetBrains Mono'; font-size: 0.7rem; white-space: nowrap; }
+        /* TICKER FOOTER */
+        .ticker {
+            position: fixed; bottom: 0; left: 55px; right: 0; height: 40px;
+            background: #000; border-top: 1px solid var(--border); z-index: 1000;
+            display: flex; align-items: center; overflow: hidden;
+        }
+        .ticker-wrap { display: flex; animation: scrollTicker 30s linear infinite; white-space: nowrap; }
         @keyframes scrollTicker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .ticker-track span { margin-right: 60px; }
-        .up { color: var(--green); } .down { color: var(--red); }
-
-        /* CHAT BOX */
-        #log-terminal { height: 200px; overflow-y: auto; background: #000; border: 1px solid var(--border); padding: 15px; font-family: 'JetBrains Mono'; font-size: 11px; margin-bottom: 10px; }
-        .log-entry { color: #64748b; margin-bottom: 5px; }
-        .log-entry span { color: var(--cyan); }
-
+        .ticker-item { font-family: 'JetBrains Mono'; font-size: 11px; margin-right: 60px; }
+        .up { color: var(--green); }
     </style>
 </head>
 
 <body>
 
     <div id="line-gutter"></div>
-    <canvas id="webgl-canvas"></canvas>
+    <canvas id="webgl-vortex"></canvas>
 
     <header>
-        <div class="brand-label">BLUE POOL / SOVEREIGN</div>
-        <div id="clock-precision">00:00:00:000</div>
-        <div style="font-family: 'JetBrains Mono'; font-size: 10px; color: #475569;">
-            VPN_STATUS: <span style="color:var(--green)">ENCRYPTED</span>
-        </div>
+        <div class="logo">BLUE POOL / MONOLITH</div>
+        <div id="precision-clock">00:00:00:000</div>
+        <div style="font-family:'JetBrains Mono'; font-size: 10px; opacity: 0.5;">STATUS: OPERATIONAL_VPN</div>
     </header>
 
     <main class="hero">
-        <div class="hero-text">
-            <p>INSTITUTIONAL QUANTUM LIQUIDITY</p>
-            <h1>BLEZO FX</h1>
-            <p>ESTABLISHED MMXXVI</p>
+        <p class="hero-sub">INSTITUTIONAL SMC TRADING ENGINE</p>
+        <h1 class="hero-title">BLEZO<br><span style="color:var(--cyan)">FORX.</span></h1>
+        
+        <div class="f-card" id="card-1" style="top: 15%; right: 10%;">
+            <h4>[01] SMC_LIQUIDITY</h4>
+            <p>Scanning Fair Value Gaps and Order Blocks across XAUUSD and Major Pairs with millisecond precision.</p>
         </div>
-
-        <div class="f-box" id="fb1" style="top: 18%; left: 12%;">
-            <h4>[01_TRADING_CORE]</h4>
-            <p>Smart Money Concepts (SMC) integration. Mapping Fair Value Gaps and Order Blocks on XAUUSD/EURUSD high-frequency feeds.</p>
-        </div>
-        <div class="f-box" id="fb2" style="top: 25%; right: 10%;">
-            <h4>[02_CMD_TERMUX]</h4>
-            <p>Mobile command center. Executing Python automation scripts via Android/Linux shell with sub-10ms LD4 latency.</p>
-        </div>
-        <div class="f-box" id="fb3" style="bottom: 22%; left: 15%;">
-            <h4>[03_SKY_FOREST]</h4>
-            <p>Engineering Phase: Drone-based reforestation fleet. 5-drone swarm mapping terrain and distributing seeds autonomously.</p>
-        </div>
-        <div class="f-box" id="fb4" style="bottom: 18%; right: 12%;">
-            <h4>[04_WEB_DESIGN]</h4>
-            <p>Professional brand building. Creating digital showrooms for high-end clients like Pascal Samba Mattress Gallery.</p>
+        <div class="f-card" id="card-2" style="bottom: 20%; left: 10%;">
+            <h4>[02] SKY_FOREST</h4>
+            <p>Deploying autonomous drone fleets for large-scale reforestation. Fleet status: 05 Active Units.</p>
         </div>
     </main>
 
-    <section id="terminal">
-        <span class="tag">/ / REAL_TIME_LIQUIDITY_STREAM</span>
-        <h2>MARKET TERMINAL</h2>
-        <div class="grid-master">
-            <div class="module-card" style="grid-column: span 2;">
-                <div id="tradingview_main" style="height: 500px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);"></div>
+    <section id="trading">
+        <span class="section-tag">// MARKET_UPLINK</span>
+        <h2>TERMINAL.</h2>
+        <div class="grid">
+            <div class="module" style="grid-column: span 2;">
+                <h3>Real-Time Analysis</h3>
+                <p style="color: #64748b; margin: 15px 0 30px;">Direct integration with JustMarkets institutional data feeds via LD4 servers.</p>
+                <div id="tradingview_widget" style="height: 450px; border-radius: 12px; border: 1px solid var(--border); overflow: hidden;"></div>
             </div>
-            <div class="module-card">
-                <h3>Operator Status</h3>
-                <div style="margin-top:20px; font-family:'JetBrains Mono'; font-size: 0.85rem;">
-                    <p style="margin-bottom:10px;">● Win Rate: <span style="color:var(--green)">84.2%</span></p>
-                    <p style="margin-bottom:10px;">● Profit Factor: <span style="color:var(--cyan)">4.12</span></p>
-                    <p style="margin-bottom:10px;">● Risk Model: <span style="color:var(--red)">Fixed 1%</span></p>
-                    <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
-                    <p style="color:#64748b; font-size: 0.7rem;">ACCOUNT_TYPE: INSTITUTIONAL_RAW</p>
-                    <a href="https://one.justmarkets.link/a/l9f5z039jd" class="btn-action" style="width:100%; text-align:center;">Open Broker Account</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="projects">
-        <span class="tag">/ / DIVERSIFIED_ENGINEERING_VAULT</span>
-        <h2>PROJECT_ARCHIVE</h2>
-        <div class="grid-master">
-            <div class="module-card">
-                <h3>Web Design Portfolio</h3>
-                <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:20px;">Current professional outreach and design architectures.</p>
-                <div class="portfolio-item">
-                    <div class="portfolio-icon">PS</div>
-                    <div>
-                        <h4 style="font-size:0.9rem;">Pascal Samba Gallery</h4>
-                        <p style="font-size:0.7rem; color:#64748b;">Mattress & Bedding Showroom Design</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-icon">BK</div>
-                    <div>
-                        <h4 style="font-size:0.9rem;">Blessing Kijana Brand</h4>
-                        <p style="font-size:0.7rem; color:#64748b;">Digital Identity & Authority Site</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="module-card">
-                <h3>Sovereign Community</h3>
-                <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:20px;">Join 5,000+ traders in the official War-Room.</p>
-                <a href="https://chat.whatsapp.com/CilN29z1wYg05QcRtpXV1z" class="btn-action" style="background:var(--green); border-color:var(--green); color:#000;">WhatsApp Group</a>
-                <a href="https://payhip.com/b/nwOL4" class="btn-action" style="border-color:var(--gold); color:var(--gold);">Buy Premium Course</a>
-            </div>
-
-            <div class="module-card">
-                <h3>System Logs</h3>
-                <div id="log-terminal">
-                    <div class="log-entry"><span>[SYS]</span> Initialize Sovereign Protocol... OK</div>
-                    <div class="log-entry"><span>[VPN]</span> Secure Tunnel Established... OK</div>
-                    <div class="log-entry"><span>[SMC]</span> Liquidity Sweep Detected: XAUUSD</div>
-                    <div class="log-entry"><span>[SKY]</span> Drone 01-05 Pre-flight Check... OK</div>
-                </div>
-                <input id="terminal-input" placeholder="Enter Command..." style="width:100%; background:#0b0f1a; border:1px solid var(--border); padding:10px; color:#fff; font-family:'JetBrains Mono'; font-size:10px;">
+            <div class="module">
+                <h3>Sovereign Hub</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.6;">
+                    Join the Blue Pool community of 5,000+ elite traders. Access the premium SMC masterclass and automated signals.
+                </p>
+                <a href="https://chat.whatsapp.com/CilN29z1wYg05QcRtpXV1z" class="btn" style="width: 100%; text-align: center; background: var(--green); border: none; color: #000;">WHATSAPP ACCESS</a>
+                <a href="https://payhip.com/b/nwOL4" class="btn" style="width: 100%; text-align: center;">PREMIUM COURSE</a>
             </div>
         </div>
     </section>
 
-    <div class="ticker-wrap">
-        <div class="ticker-track">
-            <span>XAUUSD <span class="up">2,185.40 (+1.2%)</span></span>
-            <span>EURUSD <span class="down">1.0845 (-0.3%)</span></span>
-            <span>GBPUSD <span class="up">1.2678 (+0.5%)</span></span>
-            <span>NAS100 <span class="up">18,245.20 (+0.8%)</span></span>
-            <span>BTCUSD <span class="up">68,432 (+3.1%)</span></span>
-            <span>OPERATOR: <span style="color:var(--cyan)">BLEZO_FX_ACTIVE</span></span>
+    <section id="portfolio">
+        <span class="section-tag">// WEB_ARCHITECTURE</span>
+        <h2>WORKS.</h2>
+        <div class="grid">
+            <div class="module">
+                <span style="color:var(--cyan); font-weight: 700;">[CLIENT]</span>
+                <h3 style="margin: 10px 0;">Pascal Samba</h3>
+                <p style="color: #64748b;">Digital Showroom and Branding Architecture for the Mattress & Bedding industry.</p>
+            </div>
+            <div class="module">
+                <span style="color:var(--cyan); font-weight: 700;">[IDENTITY]</span>
+                <h3 style="margin: 10px 0;">Blessing Kijana</h3>
+                <p style="color: #64748b;">Personal Brand Building and Executive Portfolio Design.</p>
+            </div>
+            <div class="module">
+                <span style="color:var(--cyan); font-weight: 700;">[ACADEMIC]</span>
+                <h3 style="margin: 10px 0;">Bhumena Comp.</h3>
+                <p style="color: #64748b;">Leadership portals and Grade 9 examination coordination systems.</p>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <footer class="ticker">
+        <div class="ticker-wrap">
+            <div class="ticker-item">XAUUSD <span class="up">2,192.40 (+1.8%)</span></div>
+            <div class="ticker-item">EURUSD <span>1.0842 (-0.1%)</span></div>
+            <div class="ticker-item">NAS100 <span class="up">18,245 (+0.9%)</span></div>
+            <div class="ticker-item">OPERATOR: <span style="color:var(--cyan)">BLEZO_FX_ACTIVE</span></div>
+            <div class="ticker-item">VPN_TUNNEL: <span style="color:var(--green)">SECURE</span></div>
+            <div class="ticker-item">TERMUX_UPLINK: <span style="color:var(--cyan)">ONLINE</span></div>
+        </div>
+    </footer>
 
     <script>
         // --- 1. 1000 LINE GUTTER GENERATOR ---
         const gutter = document.getElementById('line-gutter');
-        let gutterContent = '';
+        let gutterLines = "";
         for(let i=1; i<=1000; i++) {
-            gutterContent += `<div>${i.toString().padStart(4, '0')}</div>`;
+            gutterLines += `<div>${i.toString().padStart(4, '0')}</div>`;
         }
-        gutter.innerHTML = gutterContent;
+        gutter.innerHTML = gutterLines;
 
-        // --- 2. PRECISION MILLISECOND CLOCK ---
-        function runClock() {
+        // --- 2. PRECISION CLOCK ---
+        function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
             const ms = String(now.getMilliseconds()).padStart(3, '0');
-            document.getElementById('clock-precision').innerText = `${h}:${m}:${s}:${ms}`;
+            document.getElementById('precision-clock').innerText = `${h}:${m}:${s}:${ms}`;
         }
-        setInterval(runClock, 1);
+        setInterval(updateClock, 1);
 
-        // --- 3. WEBGL VORTEX (Three.js) ---
+        // --- 3. WEBGL PARTICLE VORTEX ---
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-canvas'), alpha: true, antialias: true });
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-vortex'), alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        const particleCount = 5000;
-        const positions = new Float32Array(particleCount * 3);
-        for(let i=0; i<particleCount*3; i++) positions[i] = (Math.random() - 0.5) * 12;
-        
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const material = new THREE.PointsMaterial({ size: 0.007, color: 0x00f2ff, transparent: true, opacity: 0.4 });
-        const points = new THREE.Points(geometry, material);
-        scene.add(points);
-        camera.position.z = 3;
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 6000;
+        const starPositions = new Float32Array(starCount * 3);
+        for(let i=0; i<starCount*3; i++) {
+            starPositions[i] = (Math.random() - 0.5) * 15;
+        }
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+        const starMaterial = new THREE.PointsMaterial({ size: 0.006, color: 0x00f2ff, transparent: true, opacity: 0.5 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+        camera.position.z = 5;
 
-        function animateVortex() {
-            requestAnimationFrame(animateVortex);
-            points.rotation.y += 0.0007;
-            points.rotation.x += 0.0002;
+        function animateWebGL() {
+            requestAnimationFrame(animateWebGL);
+            stars.rotation.y += 0.0006;
+            stars.rotation.x += 0.0002;
             renderer.render(scene, camera);
         }
-        animateVortex();
+        animateWebGL();
 
-        // --- 4. TRADINGVIEW INTEGRATION ---
-        const tvScript = document.createElement('script');
-        tvScript.src = "https://s3.tradingview.com/tv.js";
-        tvScript.onload = () => {
-            new TradingView.widget({
-                container_id: "tradingview_main",
-                symbol: "FX:XAUUSD",
-                theme: "dark",
-                autosize: true,
-                interval: "15",
-                timezone: "Etc/UTC",
-                style: "1",
-                locale: "en",
-                toolbar_bg: "#f1f3f6",
-                enable_publishing: false,
-                hide_side_toolbar: false,
-                allow_symbol_change: true
-            });
-        };
-        document.body.appendChild(tvScript);
+        // --- 4. GSAP HERO ANIMATIONS ---
+        gsap.registerPlugin(ScrollTrigger);
 
-        // --- 5. GSAP ANIME MOTION (Floating Boxes) ---
-        gsap.to("#fb1", { y: 20, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut" });
-        gsap.to("#fb2", { y: -30, duration: 5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 0.5 });
-        gsap.to("#fb3", { y: 25, duration: 4.5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1 });
-        gsap.to("#fb4", { y: -15, duration: 6, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1.5 });
+        // Title Entrance
+        gsap.from(".hero-title", { opacity: 0, x: -100, duration: 1.5, ease: "power4.out" });
+        gsap.from(".hero-sub", { opacity: 0, y: 50, duration: 1, delay: 0.5 });
 
-        // Mouse Interactivity Parallax
+        // Floating Cards Parallax
+        gsap.to("#card-1", { y: 30, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut" });
+        gsap.to("#card-2", { y: -30, duration: 5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1 });
+
+        // Mouse Interactivity
         window.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 45;
-            const y = (e.clientY / window.innerHeight - 0.5) * 45;
-            gsap.to(".f-box", { x: x, y: y, duration: 2.5, ease: "power2.out" });
+            const x = (e.clientX / window.innerWidth - 0.5) * 50;
+            const y = (e.clientY / window.innerHeight - 0.5) * 50;
+            gsap.to(".f-card", { x: x, y: y, duration: 2, ease: "power2.out" });
             gsap.to(camera.position, { x: x*0.01, y: -y*0.01, duration: 3 });
         });
 
-        // Responsive Resizing
+        // --- 5. TRADINGVIEW WIDGET ---
+        const script = document.createElement('script');
+        script.src = "https://s3.tradingview.com/tv.js";
+        script.onload = () => {
+            new TradingView.widget({
+                "container_id": "tradingview_widget",
+                "symbol": "FX:XAUUSD",
+                "interval": "15",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "autosize": true
+            });
+        };
+        document.head.appendChild(script);
+
+        // Handle Resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // Terminal Interaction
-        const termInput = document.getElementById('terminal-input');
-        const termLog = document.getElementById('log-terminal');
-        termInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') {
-                const val = termInput.value;
-                const newLog = document.createElement('div');
-                newLog.className = 'log-entry';
-                newLog.innerHTML = `<span>[USER]</span> ${val}`;
-                termLog.appendChild(newLog);
-                termLog.scrollTop = termLog.scrollHeight;
-                termInput.value = '';
-                
-                // Add fake response
-                setTimeout(() => {
-                    const resp = document.createElement('div');
-                    resp.className = 'log-entry';
-                    resp.innerHTML = `<span>[SYS]</span> Command "${val}" executed via Sovereign Hub.`;
-                    termLog.appendChild(resp);
-                    termLog.scrollTop = termLog.scrollHeight;
-                }, 500);
-            }
         });
     </script>
 </body>
