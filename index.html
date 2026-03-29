@@ -1,313 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BLEZ0FX Terminal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Pool Forex Traders | Lead by BLEZOFX</title>
+    <style>
+        :root {
+            --primary-blue: #0a84ff;
+            --neon-glow: #00f2ff;
+            --deep-black: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
 
-<!-- GSAP -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--deep-black);
+            color: #fff;
+            overflow-x: hidden;
+        }
 
-<!-- Three.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+        /* Information-Rich Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-blue);
+        }
 
-<style>
-:root{
---accent:#00c896;
---bg:#0d1117;
---panel:#161b22;
---text:#e6edf3;
---muted:#8b949e;
-}
+        .logo-area { font-weight: 900; letter-spacing: 3px; color: var(--neon-glow); text-transform: uppercase; }
+        .session-info { font-size: 0.75rem; letter-spacing: 1px; color: #0f0; display: flex; gap: 15px; }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:system-ui,-apple-system;
-}
+        canvas { display: block; }
 
-body{
-background:var(--bg);
-color:var(--text);
-overflow-x:hidden;
-}
+        /* Personalized Sidebar with Your Links */
+        .contact-icons {
+            position: fixed;
+            top: 50%;
+            right: 25px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
 
-/* WebGL */
-#bg{
-position:fixed;
-top:0;
-left:0;
-z-index:-1;
-opacity:0.2;
-}
+        .contact-icons a {
+            width: 55px;
+            height: 55px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--primary-blue);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 20px;
+        }
 
-/* Layout */
-.container{
-max-width:1200px;
-margin:auto;
-padding:20px;
-}
+        .contact-icons a:hover { 
+            background: var(--primary-blue); 
+            box-shadow: 0 0 20px var(--primary-blue);
+            transform: scale(1.1) rotate(5deg);
+        }
 
-/* Navbar */
-nav{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 20px;
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(8px);
-position:sticky;
-top:0;
-z-index:10;
-}
+        /* Blue Pool AI Interface */
+        .ai-button {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-blue), #0044ff);
+            border-radius: 50%;
+            box-shadow: 0 0 25px rgba(10, 132, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2000;
+            font-weight: bold;
+            border: 2px solid #fff;
+        }
 
-nav h1{
-font-size:18px;
-color:var(--accent);
-}
+        .ai-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(10, 20, 40, 0.98), #000);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            padding: 20px;
+        }
 
-nav button{
-background:var(--accent);
-border:none;
-padding:8px 14px;
-border-radius:6px;
-cursor:pointer;
-}
+        .chat-container {
+            width: 95%;
+            max-width: 700px;
+            background: #0a0a0a;
+            border: 1px solid var(--primary-blue);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+        }
 
-/* Grid */
-.grid{
-display:grid;
-grid-template-columns:2fr 1fr;
-gap:20px;
-margin-top:20px;
-}
+        #chat-history {
+            height: 350px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            color: #a0c4ff;
+        }
 
-/* Panels */
-.panel{
-background:var(--panel);
-border-radius:10px;
-padding:15px;
-}
+        .ai-overlay textarea {
+            width: 100%;
+            height: 100px;
+            background: #000;
+            color: var(--neon-glow);
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+        }
 
-/* Chart */
-#chart{
-height:400px;
-}
-
-/* Signals */
-.signal{
-display:flex;
-justify-content:space-between;
-padding:10px 0;
-border-bottom:1px solid #222;
-}
-
-.buy{color:#00ff9c;}
-.sell{color:#ff4d4d;}
-
-/* Ticker */
-.ticker{
-display:flex;
-gap:15px;
-overflow:hidden;
-font-size:14px;
-color:var(--muted);
-}
-
-/* Auth modal */
-.modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.7);
-display:none;
-justify-content:center;
-align-items:center;
-}
-
-.modal-box{
-background:#111;
-padding:30px;
-border-radius:10px;
-width:300px;
-}
-
-.modal input{
-width:100%;
-padding:10px;
-margin-bottom:10px;
-background:#1a1a1a;
-border:none;
-color:white;
-}
-
-.modal button{
-width:100%;
-padding:10px;
-background:var(--accent);
-border:none;
-}
-
-/* Admin */
-#admin{
-display:none;
-margin-top:20px;
-}
-
-</style>
+        .btn-ui { 
+            margin-top: 15px; 
+            padding: 12px 30px; 
+            background: var(--primary-blue); 
+            border: none; 
+            color: #fff; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            text-transform: uppercase;
+        }
+    </style>
 </head>
-
 <body>
 
-<canvas id="bg"></canvas>
+<header>
+    <div class="logo-area">Blue Pool Forex</div>
+    <div class="session-info">
+        <span id="utc-clock">00:00:00 UTC</span>
+        <span>STATUS: <strong style="color:var(--neon-glow)">INSTITUTIONAL DATA FEED ACTIVE</strong></span>
+    </div>
+</header>
 
-<nav>
-<h1>BLEZ0FX TERMINAL</h1>
-<button onclick="openAuth()">Login</button>
-</nav>
-
-<div class="container">
-
-<div class="ticker" id="ticker"></div>
-
-<div class="grid">
-
-<div class="panel">
-<div id="chart"></div>
+<div class="contact-icons">
+    <a href="mailto:BLEZOFXacademy@gmail.com" title="Direct Email">✉</a>
+    <a href="https://chat.whatsapp.com/CilN29z1wYg05QcRtpXV1z" target="_blank" title="Join WhatsApp Community">💬</a>
+    <a href="Https://t.me/BluepoolForexKenya" target="_blank" title="Telegram Channel">✈</a>
+    <a href="https://one.justmarkets.link/a/l9f5z039jd" target="_blank" title="Official Broker (JustMarkets)">💹</a>
 </div>
 
-<div class="panel">
-<h3>Signals</h3>
-<div id="signals"></div>
+<div class="ai-button">AI BOT</div>
+
+<div class="ai-overlay">
+    <div class="chat-container">
+        <h2 style="color:var(--primary-blue)">Blue Pool Intelligence v3.0</h2>
+        <div id="chat-history">
+            <p style="color:#666">// SYSTEM READY... SESSION INITIALIZED.</p>
+            <p><strong>Blue Pool Bot:</strong> Greetings. I am the Blue Pool intelligence core. I possess massive data on SMC, ICT, and Price Action. How shall we dominate the charts today?</p>
+        </div>
+        <textarea id="ai-input" placeholder="Enter strategy query or market analysis request..."></textarea>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-ui" onclick="processAI()">EXECUTE ANALYSIS</button>
+            <button class="btn-ui" style="background:#444" onclick="document.querySelector('.ai-overlay').style.display='none'">CLOSE TERMINAL</button>
+        </div>
+    </div>
 </div>
 
-</div>
-
-<div id="admin" class="panel">
-<h3>Admin Panel</h3>
-<p>Manage signals (UI ready)</p>
-</div>
-
-</div>
-
-<!-- AUTH -->
-<div class="modal" id="auth">
-<div class="modal-box">
-<h3>Login</h3>
-<input placeholder="Username">
-<input type="password" placeholder="Password">
-<button onclick="login()">Access</button>
-</div>
-</div>
-
-<!-- TradingView -->
-<script src="https://s3.tradingview.com/tv.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
 
 <script>
-// TradingView Chart
-new TradingView.widget({
-"container_id": "chart",
-"width": "100%",
-"height": 400,
-"symbol": "EURUSD",
-"interval": "15",
-"theme": "dark",
-"style": "1",
-"locale": "en"
-});
+// --- MASSIVE DATASET FOR 3D NODES ---
+const forexNodes = [
+    "SMC: Smart Money Concepts Explained", "ICT: Inner Circle Trader Fundamentals",
+    "Liquidity: Engineering Market Inducement", "The Judas Swing: Identifying False Moves",
+    "Order Blocks: High Probability Zones", "Fair Value Gaps: Understanding Imbalance",
+    "Market Structure: Shift vs Continuity", "The Silver Bullet: Time-Based Trading",
+    "Power of 3: Accumulation / Manipulation / Distribution", "Risk/Reward: 1:3 Minimum Ratios",
+    "DXY Correlation: USD Strength Analysis", "Weekly Profile: Finding the HOD/LOD",
+    "Psychology: The 90% Failure Statistic", "Prop Firm: Passing the 8% Challenge",
+    "News Trading: NFP and CPI Volatility", "Multi-Timeframe Confluence (H4/M15/M1)",
+    "London Killzone: 2AM - 5AM EST", "New York Killzone: 7AM - 10AM EST",
+    "Displacement: Identifying Aggressive Entry", "Premium vs Discount: Fibonacci Levels",
+    "Mitigation: The Art of the Retest", "Institutional Funding Candles",
+    "Daily Bias: Framing the Market Direction", "Position Sizing: Managing Margin",
+    "Trading Plan: Rules for Execution", "Breaker Blocks: Structural Flip Zones",
+    "Blue Pool Mastery: The Founder's Edge"
+];
 
-// Fake Live Prices (replace with API later)
-const pairs = ["EUR/USD","GBP/USD","BTC/USD"];
-const ticker = document.getElementById("ticker");
-
-function updateTicker(){
-ticker.innerHTML = pairs.map(p=>{
-let price=(Math.random()*100).toFixed(2);
-return `<div>${p}: ${price}</div>`;
-}).join("");
-}
-setInterval(updateTicker,1000);
-updateTicker();
-
-// Signals
-const signals = document.getElementById("signals");
-
-function generateSignal(){
-let types=["BUY","SELL"];
-let pair=pairs[Math.floor(Math.random()*pairs.length)];
-let type=types[Math.floor(Math.random()*2)];
-
-signals.innerHTML = `
-<div class="signal">
-<span>${pair}</span>
-<span class="${type.toLowerCase()}">${type}</span>
-</div>` + signals.innerHTML;
-}
-setInterval(generateSignal,3000);
-
-// Auth
-function openAuth(){
-document.getElementById("auth").style.display="flex";
-}
-
-function login(){
-document.getElementById("auth").style.display="none";
-document.getElementById("admin").style.display="block";
-}
-
-// WebGL (subtle particles)
+// --- THREE.JS ENGINE ---
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-const renderer = new THREE.WebGLRenderer({
-canvas:document.querySelector('#bg'),
-alpha:true
+const group = new THREE.Group();
+const blocks = [];
+
+forexNodes.forEach((nodeText, i) => {
+    const geometry = new THREE.BoxGeometry(6, 2, 0.5);
+    const material = new THREE.MeshPhongMaterial({ 
+        color: 0x000000, 
+        emissive: 0x0a84ff, 
+        emissiveIntensity: 0.2,
+        shininess: 100
+    });
+    
+    const block = new THREE.Mesh(geometry, material);
+    
+    // Complex Spiral Positioning
+    block.position.y = -i * 3.5;
+    block.position.x = Math.sin(i * 0.4) * 5;
+    block.position.z = Math.cos(i * 0.4) * 5;
+    block.rotation.y = i * 0.4;
+
+    // Glowing wireframe
+    const geo = new THREE.EdgesGeometry(geometry);
+    const mat = new THREE.LineBasicMaterial({ color: 0x00f2ff });
+    const wireframe = new THREE.LineSegments(geo, mat);
+    block.add(wireframe);
+
+    group.add(block);
+    blocks.push(block);
 });
 
-renderer.setSize(window.innerWidth,window.innerHeight);
+scene.add(group);
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const light = new THREE.PointLight(0x0a84ff, 2);
+light.position.set(10, 10, 10);
+scene.add(light);
 
-const geometry = new THREE.BufferGeometry();
-const vertices = [];
+camera.position.z = 15;
 
-for(let i=0;i<5000;i++){
-vertices.push(
-(Math.random()-0.5)*1000,
-(Math.random()-0.5)*1000,
-(Math.random()-0.5)*1000
-);
-}
+// --- DYNAMIC SCROLL & ANIMATION ---
+let scrollPos = 0;
+window.addEventListener('scroll', () => { scrollPos = window.scrollY; });
 
-geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices,3));
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // Smooth camera track
+    camera.position.y += (-scrollPos * 0.025 - camera.position.y) * 0.1;
+    group.rotation.y += 0.003;
 
-const material = new THREE.PointsMaterial({
-size:1,
-color:0x00c896
-});
+    // Pulse effect
+    const pulse = Math.sin(Date.now() * 0.002) * 0.5 + 0.5;
+    blocks.forEach(b => {
+        b.children[0].material.opacity = pulse;
+    });
 
-const points = new THREE.Points(geometry,material);
-scene.add(points);
-
-camera.position.z = 5;
-
-function animate(){
-requestAnimationFrame(animate);
-points.rotation.y += 0.0005;
-renderer.render(scene,camera);
+    renderer.render(scene, camera);
 }
 animate();
 
-// Smooth load animation
-gsap.from(".panel",{
-opacity:0,
-y:20,
-duration:0.6,
-stagger:0.1
+// --- AI CORE LOGIC ---
+function processAI() {
+    const query = document.getElementById('ai-input').value;
+    const history = document.getElementById('chat-history');
+    if(!query) return;
+
+    history.innerHTML += `<p style="color:var(--neon-glow)"><strong>YOU:</strong> ${query}</p>`;
+    
+    // Simulate "Massive Information" retrieval
+    setTimeout(() => {
+        history.innerHTML += `<p><strong>Blue Pool Bot:</strong> Analyzing "${query}" through the Blue Pool Lens... <br><br>
+        <strong>Technical Outlook:</strong> Prices are currently reacting to a significant Fair Value Gaps (FVG) on the H4 timeframe. 
+        I recommend monitoring the Dollar Index (DXY) for SMT divergence. 
+        If the market structure shifts on the M5 timeframe inside the New York Killzone, look for a 1:3 Risk/Reward entry using the JustMarkets platform for low spreads. 
+        Always remember: Liquidity precedes the move. Dominate the charts.</p>`;
+        history.scrollTop = history.scrollHeight;
+    }, 600);
+    
+    document.getElementById('ai-input').value = "";
+}
+
+// Clock Setup
+setInterval(() => {
+    document.getElementById('utc-clock').innerText = new Date().toUTCString().split(' ')[4] + " UTC";
+}, 1000);
+
+// Interaction
+document.querySelector(".ai-button").addEventListener("click", () => {
+    document.querySelector(".ai-overlay").style.display = "flex";
 });
 
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
 </script>
 
 </body>
 </html>
+
